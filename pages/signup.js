@@ -56,7 +56,7 @@ export default class SignupPage extends Component {
       API.signup(id, password)
         .then(response => {
           this.onRequest();
-          Router.push("/login");
+          Router.push("/index");
           alert(TEXT.ALERT.successSignup);
         })
         .catch(err => {
