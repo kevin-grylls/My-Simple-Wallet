@@ -1,5 +1,7 @@
 {
   "FLASK_SERVER": {
+    "BASE_URL": "http://localhost",
+    "PORT": "8000",
     "SIGNUP": "/signup",
     "LOGIN": "/login",
     "ACCOUNTS": "/get_accounts",
