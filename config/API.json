@@ -1,0 +1,8 @@
+{
+  "FLASK_SERVER": {
+    "SIGNUP": "/signup",
+    "LOGIN": "/login",
+    "ACCOUNTS": "/get_accounts",
+    "TRANSFER": "/transfer"
+  }
+}
