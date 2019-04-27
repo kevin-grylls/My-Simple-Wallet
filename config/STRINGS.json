@@ -7,15 +7,7 @@
       },
       {
         "path": "wallet",
-        "value": "지갑목록"
-      },
-      {
-        "path": "deploy",
-        "value": "스마트 컨트랙트"
-      },
-      {
-        "path": "transfer",
-        "value": "토큰송금"
+        "value": "배포"
       },
       {
         "path": "transaction",
@@ -41,13 +33,9 @@
       "idDescription": "아이디를 입력 해주세요.",
       "passwordDescription": "패스워드를 입력 해주세요."
     },
-    "transfer": {
-      "title": "스마트 월렛",
-      "transfer": "송금하기"
-    },
     "wallet": {
       "title": "스마트 월렛",
-      "wallet": "나의 월렛",
+      "wallet": "스마트 컨트랙트",
       "load": "불러오기"
     },
     "deploy": {
@@ -56,7 +44,7 @@
     },
     "transaction": {
       "title": "스마트 월렛",
-      "transation": "트랜잭션"
+      "transaction": "트랜잭션"
     }
   },
   "ALERT": {
@@ -72,6 +60,7 @@
     "redirectForWallet": "나의 월렛으로 이동합니다.",
     "successTransaction": "송금을 완료 하였습니다.",
     "failTransaction": "송금이 실패 하였습니다.",
-    "failUnlockAccounts": "계정 언락이 실패 하였습니다."
+    "failUnlockAccounts": "계정 언락이 실패 하였습니다.",
+    "needToRegistCA": "스마트 컨트랙트 주소를 등록해주세요."
   }
 }

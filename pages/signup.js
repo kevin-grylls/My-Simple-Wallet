@@ -79,6 +79,10 @@ export default class SignupPage extends Component {
             header={TEXT.MENU.signup.title}
             main={TEXT.MENU.signup.signup}
           />
+
+          <Divider />
+          <Divider hidden />
+
           <Header as="h2">
             <b>{"회원가입"}</b>
           </Header>
@@ -86,6 +90,10 @@ export default class SignupPage extends Component {
           <Header.Subheader>
             {"지금 스마트 월렛을 만들어 보세요!"}
           </Header.Subheader>
+
+          <Divider hidden />
+          <Divider hidden />
+
           <Segment>
             <Form>
               <Form.Group widths="equal">
@@ -139,13 +147,13 @@ export default class SignupPage extends Component {
               </Form.Group>
               {onRequest == true && (
                 <Button loading secondary>
-                  {"회원가입"}
+                  {"등록"}
                 </Button>
               )}
 
               {onRequest == false && (
                 <Button secondary type="submit" onClick={this.handleSubmit}>
-                  {"회원가입"}
+                  {"등록"}
                 </Button>
               )}
             </Form>

@@ -9,36 +9,27 @@ import {
   Button,
   Image,
   Card,
-  Segment
+  Segment,
+  Step,
+  Icon
 } from "semantic-ui-react";
 import TEXT from "../config/STRINGS.json";
 import API from "../api";
 import ENV from "../common/store";
+import { observer } from "mobx-react";
 
-export default class WalletPage extends Component {
+class WalletPage extends Component {
   state = {
     wallet: [],
     coinbase: null,
-    unlock: false,
+    unlocked: false,
+    mining: false,
+    deployed: false,
+    contract: null,
     onRequest: false
   };
 
   onRequest = () => this.setState({ onRequest: !this.state.onRequest });
-
-  unlockAccount = () => {
-    this.onRequest();
-    API.unlock()
-      .then(response => {
-        this.onRequest();
-        this.setState({ unlock: true });
-        alert(TEXT.ALERT.successUnlock);
-      })
-      .catch(err => {
-        console.warn(err);
-        this.onRequest();
-        alert(TEXT.ALERT.failUnlockAccounts);
-      });
-  };
 
   loadWallet = () => {
     API.accounts()
@@ -49,6 +40,9 @@ export default class WalletPage extends Component {
         });
       })
       .catch(err => {
+        this.setState({
+          wallet: []
+        });
         console.warn(err);
       });
   };
@@ -64,13 +58,95 @@ export default class WalletPage extends Component {
       });
   };
 
+  getMiningStatus = () => {
+    this.onRequest();
+    API.statusMining()
+      .then(response => {
+        console.log("Mining Status: ", response.data.result);
+        this.setState({ mining: response.data.result });
+        this.onRequest();
+      })
+      .catch(err => {
+        console.warn(err);
+        this.onRequest();
+        alert("마이닝 상태를 가져올 수 없습니다.");
+      });
+  };
+
+  setMining = (e, { value }) => {
+    console.log(value);
+    this.onRequest();
+    API.setMining(value)
+      .then(response => {
+        console.log("Mining Setting Result :", response.data.result);
+        this.setState({ mining: response.data.result });
+        this.onRequest();
+      })
+      .catch(err => {
+        console.warn(err);
+        this.onRequest();
+        alert("마이닝 설정에 오류가 있습니다.");
+      });
+  };
+
+  unlockAccount = () => {
+    this.onRequest();
+    API.unlock()
+      .then(() => {
+        this.onRequest();
+        this.setState({ unlocked: true });
+        alert(TEXT.ALERT.successUnlock);
+      })
+      .catch(err => {
+        console.warn(err);
+        this.onRequest();
+        this.setState({ unlocked: false });
+        alert(TEXT.ALERT.failUnlockAccounts);
+      });
+  };
+
+  deployContract = (e, userId, address) => {
+    const { unlocked, deployed } = this.state;
+
+    e.preventDefault();
+
+    if (!unlocked) return alert("계정 언락을 실행하세요.");
+    if (deployed) return alert("이미 배포된 컨트랙트입니다.");
+
+    this.onRequest();
+    API.deploy(userId, address)
+      .then(response => {
+        this.onRequest();
+        console.log(response.data);
+        ENV.regist(response.data.contractAddress);
+        console.log("Contract Address: ", ENV.contract);
+        this.setState({ deployed: true, contract: response.data });
+        alert("스마트 컨트랙트 배포를 완료 하였습니다.");
+      })
+      .catch(err => {
+        this.onRequest();
+        this.setState({ deployed: false });
+        console.warn(err);
+        alert("계정 언락을 다시 시도하거나 EVM을 확인해 주세요.");
+      });
+  };
+
   componentDidMount() {
     this.loadWallet();
     this.loadCoinbase();
+    this.getMiningStatus();
   }
 
   render() {
-    const { wallet, coinbase, unlock, onRequest } = this.state;
+    const {
+      wallet,
+      coinbase,
+      mining,
+      unlocked,
+      deployed,
+      contract,
+      onRequest
+    } = this.state;
 
     const walletList = wallet.map(item => (
       <Card fluid raised>
@@ -84,7 +160,14 @@ export default class WalletPage extends Component {
           {item.address == coinbase && (
             <div className="ui two buttons">
               {onRequest == false ? (
-                <Button primary>DEPLOY</Button>
+                <Button
+                  primary
+                  onClick={e =>
+                    this.deployContract(e, item.user_id, item.address)
+                  }
+                >
+                  DEPLOY
+                </Button>
               ) : (
                 <Button primary loading>
                   DEOPLOY
@@ -109,22 +192,126 @@ export default class WalletPage extends Component {
           <Divider hidden />
 
           <Header as="h2">
-            <b>{"지갑 목록"}</b>
+            <b>{"스마트 컨트랙트"}</b>
           </Header>
           <Divider />
           <Header.Subheader>
-            {"각 계정에 할당된 지갑 정보를 조회할 수 있습니다."}
+            {"스마트 컨트랙트 배포 프로세스를 시연하는 페이지입니다."}
           </Header.Subheader>
 
           <Divider hidden />
+          <Divider hidden />
+
+          <Step.Group ordered>
+            {wallet.length > 0 ? (
+              <Step completed>
+                <Step.Content>
+                  <Step.Title>LOADED</Step.Title>
+                  <Step.Description>사용자 지갑 조회</Step.Description>
+                </Step.Content>
+              </Step>
+            ) : (
+              <Step active>
+                <Step.Content>
+                  <Step.Title>LOAD</Step.Title>
+                </Step.Content>
+              </Step>
+            )}
+
+            {mining == true ? (
+              <Step completed>
+                <Step.Content>
+                  <Step.Title>MINING</Step.Title>
+                  <Step.Description>채굴 진행 중</Step.Description>
+                </Step.Content>
+              </Step>
+            ) : (
+              <Step active>
+                <Step.Content>
+                  <Step.Title>MINE</Step.Title>
+                </Step.Content>
+              </Step>
+            )}
+
+            {unlocked == true ? (
+              <Step completed>
+                <Step.Content>
+                  <Step.Title>UNLOCKED</Step.Title>
+                  <Step.Description>계정 잠금 해제</Step.Description>
+                </Step.Content>
+              </Step>
+            ) : (
+              <Step active>
+                <Step.Content>
+                  <Step.Title>UNLOCK</Step.Title>
+                </Step.Content>
+              </Step>
+            )}
+
+            {deployed == true ? (
+              <Step completed>
+                <Step.Content>
+                  <Step.Title>DEPLOYED</Step.Title>
+                  <Step.Description>스마트 컨트랙트를 배포</Step.Description>
+                </Step.Content>
+              </Step>
+            ) : (
+              <Step active>
+                <Step.Content>
+                  <Step.Title>DEPLOY</Step.Title>
+                </Step.Content>
+              </Step>
+            )}
+
+            {contract == null ? (
+              <Step active>
+                <Step.Content>
+                  <Step.Title>RECEIVE</Step.Title>
+                </Step.Content>
+              </Step>
+            ) : (
+              <Step completed>
+                <Step.Content>
+                  <Step.Title>RECEIVED</Step.Title>
+                  <Step.Description>컨트랙트 주소 수신</Step.Description>
+                </Step.Content>
+              </Step>
+            )}
+          </Step.Group>
+
+          <Divider hidden />
+          <Divider hidden />
+          <Divider />
+          <Divider hidden />
+          <Divider hidden />
 
           <Container textAlign="right">
+            {onRequest == false && mining == true && (
+              <Button color="blue" value={false} onClick={this.setMining}>
+                <Icon loading name="spinner" />
+                ENABLE MINING
+              </Button>
+            )}
+
+            {onRequest == false && mining == false && (
+              <Button color="red" value={true} onClick={this.setMining}>
+                <Icon name="exclamation triangle" />
+                DISABLE MINING
+              </Button>
+            )}
+
+            {onRequest == true && (
+              <Button color="blue" disabled loading>
+                ENABLE MINING
+              </Button>
+            )}
+
             {onRequest == false ? (
-              <Button color="youtube" onClick={this.unlockAccount}>
+              <Button color="green" onClick={this.unlockAccount}>
                 UNLOCK ACCOUNTS
               </Button>
             ) : (
-              <Button color="youtube" loading>
+              <Button color="green" loading>
                 UNLOCK ACCOUNTS
               </Button>
             )}
@@ -133,8 +320,31 @@ export default class WalletPage extends Component {
           <Divider hidden />
 
           <Card.Group itemsPerRow={3}>{walletList}</Card.Group>
+
+          <Divider hidden />
+          <Divider hidden />
+          <Divider hidden />
+          <Divider />
+          <Divider hidden />
+          <Divider hidden />
+          <Divider hidden />
+
+          {contract != null && (
+            <div>
+              <Header as="h5" color="olive" attached="top">
+                Contract Address
+              </Header>
+              <Segment attached>{contract.contractAddress}</Segment>
+              <Header as="h5" color="olive" attached>
+                Created At
+              </Header>
+              <Segment attached="bottom">{contract.createdAt}</Segment>
+            </div>
+          )}
         </Container>
       </Layout>
     );
   }
 }
+
+export default observer(WalletPage);

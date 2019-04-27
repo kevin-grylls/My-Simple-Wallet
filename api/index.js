@@ -30,6 +30,45 @@ const login = (userId, password) =>
     options
   );
 
+const deployContract = (userId, address) =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.DEPLOY,
+    { userId: userId, address: address },
+    options
+  );
+
+const transferToken = (receiver, amount, ca) =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.TRANSFER_TOKEN,
+    {
+      receiver: {
+        userId: receiver.userId,
+        address: receiver.address
+      },
+      amount: parseInt(amount),
+      contractAddress: ca
+    },
+    options
+  );
+
+const transferTokenFrom = (sender, receiver, amount, ca) =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.TRANSFER_TOKEN_FROM,
+    {
+      sender: {
+        userId: sender.userId,
+        address: sender.address
+      },
+      receiver: {
+        userId: receiver.userId,
+        address: receiver.address
+      },
+      amount: parseInt(amount),
+      contractAddress: ca
+    },
+    options
+  );
+
 const getAccounts = () =>
   Axios.get(BASE_URL + URI.DJANGO_SERVER.ACCOUNTS, {}, options);
 
@@ -39,13 +78,34 @@ const unlockAccounts = () =>
 const getCoinbase = () =>
   Axios.get(BASE_URL + URI.DJANGO_SERVER.COINBASE, {}, options);
 
-const transfer = (from, to) =>
+const getBalanceAll = ca =>
   Axios.post(
-    BASE_URL + URI.DJANGO_SERVER.TRANSFER,
+    BASE_URL + URI.DJANGO_SERVER.BALANCE_ALL,
     {
-      from: from,
-      to: to,
-      amount: 1
+      contractAddress: ca
+    },
+    options
+  );
+
+const getBalanceOf = (userId, address, contractAddress) =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.BALANCE,
+    {
+      userId: userId,
+      address: address,
+      contractAddress: contractAddress
+    },
+    options
+  );
+
+const getMininingStatus = () =>
+  Axios.get(BASE_URL + URI.DJANGO_SERVER.MINING_STATUS, {}, options);
+
+const setMining = status =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.MINING_SET,
+    {
+      status: status
     },
     options
   );
@@ -53,8 +113,14 @@ const transfer = (from, to) =>
 export default {
   signup: signup,
   login: login,
+  deploy: deployContract,
   accounts: getAccounts,
-  transfer: transfer,
+  transferToken: transferToken,
+  transferTokenFrom: transferTokenFrom,
   unlock: unlockAccounts,
-  coinbase: getCoinbase
+  coinbase: getCoinbase,
+  balanceOf: getBalanceOf,
+  balanceAll: getBalanceAll,
+  statusMining: getMininingStatus,
+  setMining: setMining
 };

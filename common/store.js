@@ -1,21 +1,17 @@
-import { observable, action } from 'mobx'
+import { observable, action } from "mobx";
 
 class Store {
-    @observable loginStatus = false;
-    @observable user = new Object();
+  @observable contract = null;
 
-    @action.bound
-    logout() {
-        this.loginStatus = false;
-        this.user = new Object();
-    }
+  @action.bound
+  remove() {
+    this.contract = null;
+  }
 
-    @action.bound
-    login(user) {
-        this.loginStatus = true;
-        this.user = Object.assign({}, user);
-    }
+  @action.bound
+  regist(contractAddress) {
+    this.contract = contractAddress;
+  }
 }
 
 export default new Store();
-
