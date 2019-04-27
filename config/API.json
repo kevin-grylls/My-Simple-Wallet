@@ -1,10 +1,17 @@
 {
-  "FLASK_SERVER": {
+  "DJANGO_SERVER": {
     "BASE_URL": "http://localhost",
     "PORT": "8000",
-    "SIGNUP": "/signup",
-    "LOGIN": "/login",
-    "ACCOUNTS": "/get_accounts",
-    "TRANSFER": "/transfer"
+    "SIGNUP": "/wallet/create/",
+    "LOGIN": "/wallet/login/",
+    "ACCOUNTS": "/wallet/list/",
+    "DEPLOY": "/wallet/deploy/",
+    "TRANSFER_TOKEN": "/wallet/transfer_token/",
+    "TRANSFER_TOKEN_FROM": "/wallet/transfer_token_from/",
+    "BALANCE": "/wallet/balance_of/",
+    "TOTAL_SUPPLY": "/wallet/total_supply?ca=address",
+    "FUNCTIONS": "/wallet/all_functions?ca=address",
+    "UNLOCK": "/wallet/unlock_all/",
+    "COINBASE": "/wallet/get_coinbase/"
   }
 }

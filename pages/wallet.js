@@ -1,129 +1,140 @@
-import React, { Component } from 'react';
-import 'semantic-ui-css/semantic.min.css';
-import Layout from '../components/Layout'
-import Locator from '../components/Locator';
-import { Form, Container, Segment, Divider, Header, Button } from 'semantic-ui-react'
-import TEXT from '../config/STRINGS.json';
-import ENV from '../common/store';
+import React, { Component } from "react";
+import "semantic-ui-css/semantic.min.css";
+import Layout from "../components/Layout";
+import Locator from "../components/Locator";
+import {
+  Container,
+  Divider,
+  Header,
+  Button,
+  Image,
+  Card,
+  Segment
+} from "semantic-ui-react";
+import TEXT from "../config/STRINGS.json";
+import API from "../api";
+import ENV from "../common/store";
 
 export default class WalletPage extends Component {
+  state = {
+    wallet: [],
+    coinbase: null,
+    unlock: false,
+    onRequest: false
+  };
 
-    state = {
-        id: "",
-        password: "",
-        address: "",
-        privateKey: "",
-        balance: 0,
-        onRequest: false
-    }
+  onRequest = () => this.setState({ onRequest: !this.state.onRequest });
 
-    loadWallet = () => {
+  unlockAccount = () => {
+    this.onRequest();
+    API.unlock()
+      .then(response => {
         this.onRequest();
-        setTimeout(() => {
-            this.setState({
-                id: ENV.user.userId,
-                password: ENV.user.password,
-                address: ENV.user.address,
-                privateKey: ENV.user.privateKey,
-                balance: ENV.user.balance
-            })
-            this.onRequest();
-        }, 1000)
-    }
+        this.setState({ unlock: true });
+        alert(TEXT.ALERT.successUnlock);
+      })
+      .catch(err => {
+        console.warn(err);
+        this.onRequest();
+        alert(TEXT.ALERT.failUnlockAccounts);
+      });
+  };
 
-    onRequest = () => this.setState({ onRequest: !this.state.onRequest });
+  loadWallet = () => {
+    API.accounts()
+      .then(response => {
+        console.log(response.data);
+        this.setState({
+          wallet: response.data
+        });
+      })
+      .catch(err => {
+        console.warn(err);
+      });
+  };
 
-    render() {
-        const { id, password, address, privateKey, balance, onRequest } = this.state;
+  loadCoinbase = () => {
+    API.coinbase()
+      .then(response => {
+        console.log(response.data);
+        this.setState({ coinbase: response.data.result });
+      })
+      .catch(err => {
+        console.warn(err);
+      });
+  };
 
-        return (
-            <Layout>
-                <Container>
-                    <div style={{ height: "20px" }} />
-                    <Divider hidden />
-                    <Locator
-                        header={TEXT.MENU.wallet.title}
-                        main={TEXT.MENU.wallet.wallet}
-                    />
-                    <Divider/>
-                    <Header as="h2">
-                        <b>{"나의 스마트 월렛"}</b>
-                    </Header>
-                    <Divider />
-                    <Header.Subheader>
-                        {"나의 월렛 정보를 확인하실 수 있는 페이지입니다."}
-                    </Header.Subheader>
-                    <Segment>
-                        <Form>
-                            <Form.Group widths="equal">
-                                <Form.Input
-                                    readOnly
-                                    required
-                                    fluid
-                                    name="id"
-                                    value={id}
-                                    label={"ID"}
-                                    placeholder="ID"
-                                />
-                            </Form.Group>
-                            <Form.Group widths="equal">
-                                <Form.Input
-                                    readOnly
-                                    required
-                                    fluid
-                                    name="password"
-                                    value={password}
-                                    label={"Password"}
-                                    placeholder="Password"
-                                    type="password"
-                                />
-                            </Form.Group>
-                            <Form.Group widths="equal">
-                                <Form.Input
-                                    readOnly
-                                    required
-                                    fluid
-                                    name="address"
-                                    value={address}
-                                    label={"Address"}
-                                    placeholder="Address"
-                                />
-                            </Form.Group>
-                            <Form.Group widths="equal">
-                                <Form.Input
-                                    readOnly
-                                    required
-                                    fluid
-                                    name="privateKey"
-                                    value={privateKey}
-                                    label={"Private Key"}
-                                    placeholder="Private Key"
-                                />
-                            </Form.Group>
-                            <Form.Group widths="equal">
-                                <Form.Input
-                                    readOnly
-                                    required
-                                    fluid
-                                    name="balance"
-                                    value={balance}
-                                    label={"Balance"}
-                                    placeholder="Balance"
-                                />
-                            </Form.Group>
-                            {onRequest == false ? (
-                                <Button primary onClick={this.loadWallet}>
-                                    {TEXT.MENU.wallet.load}
-                                </Button>
-                            ) : (
-                                <Button loading secondary>
-                                    {TEXT.MENU.wallet.load}
-                                </Button>
-                            )}
-                        </Form>
-                    </Segment>
-                </Container>
-            </Layout>
-        )
-    }
+  componentDidMount() {
+    this.loadWallet();
+    this.loadCoinbase();
+  }
+
+  render() {
+    const { wallet, coinbase, unlock, onRequest } = this.state;
+
+    const walletList = wallet.map(item => (
+      <Card fluid raised>
+        <Card.Content>
+          <Image floated="right" size="mini" src="/static/assets/icon.png" />
+          <Card.Header>{item.user_id}</Card.Header>
+          <Card.Meta>{item.created_at}</Card.Meta>
+          <Card.Description>{item.address}</Card.Description>
+        </Card.Content>
+        <Card.Content extra>
+          {item.address == coinbase && (
+            <div className="ui two buttons">
+              {onRequest == false ? (
+                <Button primary>DEPLOY</Button>
+              ) : (
+                <Button primary loading>
+                  DEOPLOY
+                </Button>
+              )}
+            </div>
+          )}
+        </Card.Content>
+      </Card>
+    ));
+
+    return (
+      <Layout>
+        <Container>
+          <div style={{ height: "20px" }} />
+          <Divider hidden />
+          <Locator
+            header={TEXT.MENU.wallet.title}
+            main={TEXT.MENU.wallet.wallet}
+          />
+          <Divider />
+          <Divider hidden />
+
+          <Header as="h2">
+            <b>{"지갑 목록"}</b>
+          </Header>
+          <Divider />
+          <Header.Subheader>
+            {"각 계정에 할당된 지갑 정보를 조회할 수 있습니다."}
+          </Header.Subheader>
+
+          <Divider hidden />
+
+          <Container textAlign="right">
+            {onRequest == false ? (
+              <Button color="youtube" onClick={this.unlockAccount}>
+                UNLOCK ACCOUNTS
+              </Button>
+            ) : (
+              <Button color="youtube" loading>
+                UNLOCK ACCOUNTS
+              </Button>
+            )}
+          </Container>
+
+          <Divider hidden />
+
+          <Card.Group itemsPerRow={3}>{walletList}</Card.Group>
+        </Container>
+      </Layout>
+    );
+  }
 }

@@ -7,11 +7,15 @@
       },
       {
         "path": "wallet",
-        "value": "나의지갑"
+        "value": "지갑목록"
+      },
+      {
+        "path": "deploy",
+        "value": "스마트 컨트랙트"
       },
       {
         "path": "transfer",
-        "value": "송금하기"
+        "value": "토큰송금"
       },
       {
         "path": "transaction",
@@ -20,6 +24,10 @@
     ]
   },
   "MENU": {
+    "main": {
+      "title": "스마트 월렛",
+      "main": "메인화면"
+    },
     "login": {
       "title": "스마트 월렛",
       "login": "로그인",
@@ -42,6 +50,10 @@
       "wallet": "나의 월렛",
       "load": "불러오기"
     },
+    "deploy": {
+      "title": "스마트 월렛",
+      "deploy": "스마트 컨트랙트"
+    },
     "transaction": {
       "title": "스마트 월렛",
       "transation": "트랜잭션"
@@ -53,11 +65,13 @@
     "successSignup": "회원가입을 완료 하였습니다.",
     "successLogin": "로그인 하였습니다.",
     "successLogout": "로그아웃 하였습니다.",
+    "successUnlock": "모든 계정을 언락 하였습니다.",
     "invalidAccount": "잘못된 계정입니다.",
     "validationError": "선택 조건이 잘못 되었습니다.",
     "redirectForLogin": "로그인이 필요한 서비스입니다.",
     "redirectForWallet": "나의 월렛으로 이동합니다.",
     "successTransaction": "송금을 완료 하였습니다.",
-    "failTransaction": "송금이 실패 하였습니다."
+    "failTransaction": "송금이 실패 하였습니다.",
+    "failUnlockAccounts": "계정 언락이 실패 하였습니다."
   }
 }

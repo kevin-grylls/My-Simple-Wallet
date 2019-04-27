@@ -1,7 +1,7 @@
 import Axios from "axios";
 import URI from "../config/API.json";
 
-const BASE_URL = URI.FLASK_SERVER.BASE_URL + ":" + URI.FLASK_SERVER.PORT;
+const BASE_URL = URI.DJANGO_SERVER.BASE_URL + ":" + URI.DJANGO_SERVER.PORT;
 
 const options = {
   headers: {
@@ -10,35 +10,38 @@ const options = {
   }
 };
 
-const signup = (userId, password) => {
-  return Axios.post(
-    BASE_URL + URI.FLASK_SERVER.SIGNUP,
+const signup = (userId, password) =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.SIGNUP,
     {
       userId: userId,
       password: password
     },
     options
   );
-};
 
-const login = (userId, password) => {
-  return Axios.post(
-    BASE_URL + URI.FLASK_SERVER.LOGIN,
+const login = (userId, password) =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.LOGIN,
     {
       userId: userId,
       password: password
     },
     options
   );
-};
 
-const getAccounts = () => {
-  return Axios.get(BASE_URL + URI.FLASK_SERVER.ACCOUNTS, {}, options);
-};
+const getAccounts = () =>
+  Axios.get(BASE_URL + URI.DJANGO_SERVER.ACCOUNTS, {}, options);
 
-const transfer = (from, to) => {
-  return Axios.post(
-    BASE_URL + URI.FLASK_SERVER.TRANSFER,
+const unlockAccounts = () =>
+  Axios.get(BASE_URL + URI.DJANGO_SERVER.UNLOCK, {}, options);
+
+const getCoinbase = () =>
+  Axios.get(BASE_URL + URI.DJANGO_SERVER.COINBASE, {}, options);
+
+const transfer = (from, to) =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.TRANSFER,
     {
       from: from,
       to: to,
@@ -46,11 +49,12 @@ const transfer = (from, to) => {
     },
     options
   );
-};
 
 export default {
   signup: signup,
   login: login,
-  getAccounts: getAccounts,
-  transfer: transfer
+  accounts: getAccounts,
+  transfer: transfer,
+  unlock: unlockAccounts,
+  coinbase: getCoinbase
 };
