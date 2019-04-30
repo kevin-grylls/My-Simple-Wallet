@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "semantic-ui-css/semantic.min.css";
-import Router from "next/router";
 import {
   Form,
   Button,
@@ -11,7 +10,6 @@ import {
 } from "semantic-ui-react";
 import API from "../api";
 import TEXT from "../config/STRINGS.json";
-import ENV from "../common/store";
 import Layout from "../components/Layout";
 import Locator from "../components/Locator";
 
@@ -56,7 +54,6 @@ export default class SignupPage extends Component {
       API.signup(id, password)
         .then(response => {
           this.onRequest();
-          Router.push("/index");
           alert(TEXT.ALERT.successSignup);
         })
         .catch(err => {

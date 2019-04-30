@@ -12,6 +12,10 @@
       {
         "path": "transaction",
         "value": "트랜잭션"
+      },
+      {
+        "path": "history",
+        "value": "거래내역"
       }
     ]
   },
@@ -38,13 +42,17 @@
       "wallet": "스마트 컨트랙트",
       "load": "불러오기"
     },
-    "deploy": {
-      "title": "스마트 월렛",
-      "deploy": "스마트 컨트랙트"
-    },
     "transaction": {
       "title": "스마트 월렛",
       "transaction": "트랜잭션"
+    },
+    "history": {
+      "title": "스마트 월렛",
+      "history": "거래내역"
+    },
+    "detail": {
+      "title": "스마트 월렛",
+      "detail": "상세내역"
     }
   },
   "ALERT": {

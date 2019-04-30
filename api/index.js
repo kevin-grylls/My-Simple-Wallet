@@ -78,15 +78,6 @@ const unlockAccounts = () =>
 const getCoinbase = () =>
   Axios.get(BASE_URL + URI.DJANGO_SERVER.COINBASE, {}, options);
 
-const getBalanceAll = ca =>
-  Axios.post(
-    BASE_URL + URI.DJANGO_SERVER.BALANCE_ALL,
-    {
-      contractAddress: ca
-    },
-    options
-  );
-
 const getBalanceOf = (userId, address, contractAddress) =>
   Axios.post(
     BASE_URL + URI.DJANGO_SERVER.BALANCE,
@@ -97,6 +88,27 @@ const getBalanceOf = (userId, address, contractAddress) =>
     },
     options
   );
+
+const getBalanceAll = ca =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.BALANCE_ALL,
+    {
+      contractAddress: ca
+    },
+    options
+  );
+
+const getTransactionOf = txHash =>
+  Axios.post(
+    BASE_URL + URI.DJANGO_SERVER.TRANSACTION,
+    {
+      txHash: txHash
+    },
+    options
+  );
+
+const getTransactionAll = () =>
+  Axios.get(BASE_URL + URI.DJANGO_SERVER.TRANSACTION_ALL, {}, options);
 
 const getMininingStatus = () =>
   Axios.get(BASE_URL + URI.DJANGO_SERVER.MINING_STATUS, {}, options);
@@ -121,6 +133,8 @@ export default {
   coinbase: getCoinbase,
   balanceOf: getBalanceOf,
   balanceAll: getBalanceAll,
+  transactionOf: getTransactionOf,
+  transactionAll: getTransactionAll,
   statusMining: getMininingStatus,
   setMining: setMining
 };

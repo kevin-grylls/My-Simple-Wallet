@@ -76,17 +76,19 @@ class WalletPage extends Component {
   setMining = (e, { value }) => {
     console.log(value);
     this.onRequest();
-    API.setMining(value)
-      .then(response => {
-        console.log("Mining Setting Result :", response.data.result);
-        this.setState({ mining: response.data.result });
-        this.onRequest();
-      })
-      .catch(err => {
-        console.warn(err);
-        this.onRequest();
-        alert("마이닝 설정에 오류가 있습니다.");
-      });
+    setTimeout(() => {
+      API.setMining(value)
+        .then(response => {
+          console.log("Mining Setting Result :", response.data.result);
+          this.setState({ mining: response.data.result });
+          this.onRequest();
+        })
+        .catch(err => {
+          console.warn(err);
+          this.onRequest();
+          alert("마이닝 설정에 오류가 있습니다.");
+        });
+    }, 1000);
   };
 
   unlockAccount = () => {

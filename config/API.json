@@ -10,6 +10,8 @@
     "TRANSFER_TOKEN_FROM": "/wallet/transfer_token_from/",
     "BALANCE": "/wallet/balance_of/",
     "BALANCE_ALL": "/wallet/balance_of_all/",
+    "TRANSACTION": "/wallet/get_transaction_of/",
+    "TRANSACTION_ALL": "/wallet/get_transaction_all/",
     "MINING_STATUS": "/wallet/status_miner/",
     "MINING_SET": "/wallet/set_miner/",
     "TOTAL_SUPPLY": "/wallet/total_supply?ca=address",
